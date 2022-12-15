@@ -1,0 +1,78 @@
+* Description
+
+This is a small package that wraps [[https://github.com/JiachuanDENG][JiachuanDENG's]] [[https://github.com/JiachuanDENG/combine-multiple-channels-of-audio-files][combine-multiple-channels-of-audio-files]] into Common Lisp, so you can use Common Lisp to make a multichannel audio file from the CLI. Why would you want to do that? If you are reading this, you probably already know the answer.
+
+This adapts JiachuanDENG's function to be more lispy in syntax, utilizing py4cl so you don't have to think about using python. This was made for Lisp users.
+
+* Dependencies
+
+- Python 3 (the Common Lisp package was developed using python 3.10)
+- A copy of JiachuanDENG's python code
+  - The .py file needs to be installed in your python path (there is a nice path-listing helper function to show you where to install)
+
+It's important to note, that JiachuanDENG does not have a license listed in repo for this code, so I will not distribute it from this repo until I get the okay. [[https://github.com/JiachuanDENG/combine-multiple-channels-of-audio-files/issues/1][Follow here]].
+
+For a step by step on how to install the python file:
+
+#+BEGIN_SRC lisp
+  (ql:quickload :combine-multi-channels)
+  (use-package :combine-multi-channels)
+
+  (python-path)
+  ;; Here is the output of PYTHON-PATH for my computer
+  ;; => #("/home/brandon/quicklisp/local-projects/py4cl" "/usr/lib/python310.zip"
+  ;;      "/usr/lib/python3.10" "/usr/lib/python3.10/lib-dynload"
+  ;;      "/home/brandon/.local/lib/python3.10/site-packages"
+  ;;      "/usr/lib/python3.10/site-packages")
+  #+END_SRC
+
+From the output of this, you could:
+
+#+BEGIN_SRC shell
+  wget "https://raw.githubusercontent.com/JiachuanDENG/combine-multiple-channels-of-audio-files/master/combineMultiChannels.py" -P "/home/brandon/.local/lib/python3.10/site-packages"
+  
+#+END_SRC
+
+This is what I did to install the python file. To improve this, I would like to create a Common Lisp function that adds the directory of where this package lives to your python path.
+
+* Uses
+
+There are only two functions exported in this package: COMBINE-AUDIO and PYTHON-PATH. COMBINE-AUDIO has extensive help written in its docstring. Here is a simple example on how to use it:
+
+#+BEGIN_SRC lisp
+(ql:quickload :combine-multi-channels)
+(use-package :combine-multi-channels)
+
+;; Say we have three stereo audio files, *one*, *two*, and *three*:
+(combine-audio (list *one* *two* *three*) '(0 1 0) "/tmp/output.wav")
+
+;; The output file will include in order:
+;; Left Channel of *one*
+;; Right Channel of *two*
+;; Left Channel of *three*
+;; Creating a 3 channel audio file.
+#+END_SRC
+
+For a more complicated example:
+
+#+BEGIN_SRC lisp
+  ;; Say we want to combine Left and Right channels of our source audio files
+  ;; in a particular order:
+  (combine-audio (list *one* *two* *three*) '((0 1) 0 (1 0)) "/tmp/output2.wav")
+
+  ;; The output file will include in order:
+  ;; Left Channel of *one*
+  ;; Right Channel of *one*
+  ;; Left Channel of *two*
+  ;; Right Channel of *three*
+  ;; Left Channel of *three*
+  ;; Creating a 4 channel file.
+#+END_SRC
+
+The only other function in this package is PYTHON-PATH. It prints out where your python path directories are to help you install JiachuanDENG's python file.
+  
+* License
+
+JiachuanDENG's original code keeps its respective license.
+
+Common Lisp code Licensed under the GPLv3, and I assume no responsibility for anything that happens if you use it. Use at your own risk.
