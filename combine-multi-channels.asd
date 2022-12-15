@@ -13,8 +13,8 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-
+(ql:quickload :py4cl)
+(py4cl:import-module "combineMultiChannels" :as "combo")
 
 (asdf:defsystem :combine-multi-channels
   :description "Combine audio channels from multiple files into a big multichannel file."
